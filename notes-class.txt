@@ -1,0 +1,12 @@
+array=div.shopee-search-item-result__item
+Title=div._1NoI8_
+img = div._39-Tsj > img
+price = span._341bF0
+
+
+bhinneka:
+array 	: bt-product-catalog-item
+title 	: bt-product-catalog-item__title > p
+harga 	: bt-product-catalog-item__price-normal
+img	: bt-product-catalog-item__image > img
+
