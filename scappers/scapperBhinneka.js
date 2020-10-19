@@ -66,7 +66,8 @@ async function autoScroll(page){
             })
         }        
     }    
-    insertToDatbase(dataProduct)
+    console.log(dataProduct)  
+    // insertToDatbase(dataProduct)
     await browser.close();
  
 })();

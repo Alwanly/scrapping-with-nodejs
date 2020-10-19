@@ -65,7 +65,8 @@ async function autoScroll(page){
                 console.log("Insert Success")
             })
         }        
-    }    
-    insertToDatbase(dataProduct)
+    }  
+    console.log(dataProduct)  
+    // insertToDatbase(dataProduct)
     await browser.close();
 })();
