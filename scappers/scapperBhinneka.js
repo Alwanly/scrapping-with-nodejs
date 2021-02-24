@@ -21,7 +21,7 @@ async function autoScroll(page){
 }
 
 (async ()=>{  
-    const keyword = 'laptop';
+    const keyword = 'Laptop+Asus+Notebook';
     const extractProducts = async url=>{
         const page = await browser.newPage();
         await page.goto(url,{waitUntil:'networkidle0'}); 
@@ -67,7 +67,7 @@ async function autoScroll(page){
         }        
     }    
     console.log(dataProduct)  
-    // insertToDatbase(dataProduct)
+    insertToDatbase(dataProduct)
     await browser.close();
  
 })();
