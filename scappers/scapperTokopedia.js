@@ -46,7 +46,7 @@ const getLinks = async () => {
     await page.close();
     const nextPageNumber = parseInt(url.match(/(\d+)$/)[1], 10) + 1;
     console.log(nextPageNumber);
-    if (nextPageNumber > 1) {
+    if (nextPageNumber > 5) {
       return productsOnPage;
     } else {
       const nextUrl = `https://www.tokopedia.com/kurmanurmecca/product/page/${nextPageNumber}`;
@@ -54,9 +54,9 @@ const getLinks = async () => {
       return productsOnPage.concat(await extractProducts(nextUrl));
     }
   };
-  const url = "https://www.tokopedia.com/kurmanurmecca/product/page/1";
+  const url = "https://www.tokopedia.com/haali-store/product/page/1";
   const browser = await puppeteer.launch({ headless: false });
-  const dataProduct = await extractProducts(url)       
+  const dataProduct = await extractProducts(url);
   const insertToDatbase = (dataProduct) => {
     for (let index = 0; index < dataProduct.length; index++) {
       const data = dataProduct[index];
@@ -72,24 +72,21 @@ const getLinks = async () => {
   };
 
   insertToDatbase(dataProduct);
-  await browser.close();  
+  await browser.close();
 };
 
 (async () => {  
-  // await getLinks();
+  await getLinks();  
   const browser = await puppeteer.launch({ headless: false });
-  mysql.query(
-    "SELECT link FROM tokped_link",
-    async (err, result, fields) => {
-      if (err) throw err;
-      let links = JSON.parse(JSON.stringify(result));      
-      console.log(links)
-      for (let i = 0; i < links.length; i++) {        
-        await extractProduct(links[i].link);
-      }
-      await browser.close();
+  mysql.query("SELECT link FROM tokped_link", async (err, result, fields) => {
+    if (err) throw err;
+    let links = JSON.parse(JSON.stringify(result));
+    // console.log(links);
+    for (let i = 0; i < links.length; i++) {
+      await extractProduct(links[i].link);
     }
-  );
+    await browser.close();
+  });
 
   const extractProduct = async (url) => {
     const page = await browser.newPage();
@@ -106,6 +103,7 @@ const getLinks = async () => {
       () =>
         (data = {
           nameProduct: document.querySelector("h1.css-v7vvdw").innerHTML,
+          desc:document.querySelector("div[data-testid='lblPDPDescriptionProduk'").innerHTML,
           price: document.querySelector("div.price").innerHTML,
           berat: document
             .querySelectorAll("li.css-r0v3c0")[1]
@@ -113,13 +111,14 @@ const getLinks = async () => {
         })
     );
     await page.close();
+    console.log(productsOnPage);
     await mysql.query(
-      "INSERT INTO products (nama,harga,berat) VALUES(?,?,?)",
-      [productsOnPage.nameProduct,productsOnPage.price,productsOnPage.berat],
+      "INSERT INTO products (nama,desc,harga,berat) VALUES(?,?,?,?)",
+      [productsOnPage.nameProduct,productsOnPage.desc, productsOnPage.price, productsOnPage.berat],
       (err, rows, fields) => {
         if (err) throw err;
         console.log("Insert Success");
       }
     );
   };
-});
+})();
